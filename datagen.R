@@ -1,7 +1,8 @@
 # author: Junming Zhang
 # code used to generate the data to build the model from the raw data
 # and generate plots of the data distribution with the basic RDD and
-# multivariate inear model regression (lm)
+# multivariate inear model regression (lmer) and normal multivariate
+# linear regression (lm)
 
 library("tidyverse")
 
@@ -50,7 +51,7 @@ data_generator <- function(work_path) {
   # resp_years: the range of years for responses
   resp_years = seq(from=1995, to=2015, by=5)
   
-  # filter out the rows we need to build the model (years in the range with the step length)
+  # filter out the rows we do not need to build the model (years in the range with the step length)
   hiv_increase_data %>% filter(Year %in% resp_years) %>%
     rename("new_cases_5_years_later" = colnames(hiv_increase_data)[length(colnames(hiv_increase_data))]) %>%
     select(c("Year", "Entity", "new_cases_5_years_later")) %>% mutate(Year = Year - 5) -> hiv_increase_data
@@ -85,6 +86,8 @@ data_generator <- function(work_path) {
     inner_join(urbanization_data, by=join_key) %>% inner_join(drug_and_alcohol_data, by=join_key) -> large_table
   
   # compute the new data we need to build the model (I plan to use the RDD method to make causal inference with the observational data)
+  # like avg of each predictors (used for threshold) and dummy variables (useful to observe the effect of the predictors
+  # on the left vs right side of the threshold)
   large_table %>% mutate(new_cases_share_5_years_later=new_cases_5_years_later / population_size_5_years_later) %>%
     mutate(hdi_avg=mean(hdi)) %>% mutate(haq_avg=mean(haq)) %>% mutate(gdp_per_capita_avg=mean(gdp_per_capita)) %>%
     mutate(female_emply_rate_avg=mean(female_emply_rate)) %>% mutate(urb_rate_avg=mean(urb_rate)) %>% mutate(drug_alcohol_disorder_share_avg=mean(drug_alcohol_disorder_share)) -> large_table
@@ -115,8 +118,10 @@ test_set = data_sets$test
 write.csv(train_set, paste("../data", "train_set.csv", sep="/"))
 write.csv(test_set, paste("../data", "test_set.csv", sep="/"))
 
+# plots on the data distribution of train data and test data
+# make a simple RDD linear regression line to make the distribtuion
+# more observable
 require(gridExtra)
-# plots on the train data and test data
 train_set %>% 
   ggplot(aes(x = hdi,
              y = new_cases_share_5_years_later * 1000)) +
@@ -130,7 +135,7 @@ train_set %>%
   theme_minimal() +
   ggtitle("HDI vs New infection cases share") +
   labs(x = "HDI",
-       y = "New Cases Share * 1000") ->train_hdi
+       y = "New Cases Share * 1000") -> train_hdi
 
 train_set %>% 
   ggplot(aes(x = haq,
@@ -145,7 +150,7 @@ train_set %>%
   theme_minimal() +
   ggtitle("HAQ vs New infection cases share") +
   labs(x = "HAQ",
-       y = "New Cases Share * 1000") ->train_haq
+       y = "New Cases Share * 1000") -> train_haq
 
 train_set %>% 
   ggplot(aes(x = gdp_per_capita,
@@ -160,7 +165,7 @@ train_set %>%
   theme_minimal() +
   ggtitle("GDP per capita vs New infection cases share") +
   labs(x = "GDP per capita",
-       y = "New Cases Share * 1000") ->train_gdp
+       y = "New Cases Share * 1000") -> train_gdp
 
 train_set %>% 
   ggplot(aes(x = female_emply_rate,
@@ -175,7 +180,7 @@ train_set %>%
   theme_minimal() +
   ggtitle("Female labour force participation vs New infection cases share") +
   labs(x = "female employment rate",
-       y = "New Cases Share * 1000") ->train_female_emply
+       y = "New Cases Share * 1000") -> train_female_emply
 
 train_set %>% 
   ggplot(aes(x = urb_rate,
@@ -190,7 +195,7 @@ train_set %>%
   theme_minimal() +
   ggtitle("Urbanization rate vs New infection cases share") +
   labs(x = "urbanization rate",
-       y = "New Cases Share * 1000") ->train_urb
+       y = "New Cases Share * 1000") -> train_urb
 
 train_set %>%
   ggplot(aes(x = drug_alcohol_disorder_share,
@@ -207,5 +212,97 @@ train_set %>%
   labs(x = "Drug/alcohol use disorder share",
        y = "New Cases Share * 1000") -> train_disorder
 
-grid.arrange(train_hdi, train_haq, train_gdp, train_female_emply, train_urb, train_disorder) -> data_dist_plots
+test_set %>% 
+  ggplot(aes(x = hdi,
+             y = new_cases_share_5_years_later * 1000)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = test_set %>% filter(hdi_over_avg==0), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = test_set %>% filter(hdi_over_avg==1), 
+              method='lm',
+              color = "red") +
+  theme_minimal() +
+  ggtitle("HDI vs New infection cases share") +
+  labs(x = "HDI",
+       y = "New Cases Share * 1000") -> test_hdi
+
+test_set %>% 
+  ggplot(aes(x = haq,
+             y = new_cases_share_5_years_later * 1000)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = test_set %>% filter(haq_over_avg==0), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = test_set %>% filter(haq_over_avg==1), 
+              method='lm',
+              color = "red") +
+  theme_minimal() +
+  ggtitle("HAQ vs New infection cases share") +
+  labs(x = "HAQ",
+       y = "New Cases Share * 1000") -> test_haq
+
+test_set %>% 
+  ggplot(aes(x = gdp_per_capita,
+             y = new_cases_share_5_years_later * 1000)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = test_set %>% filter(gdp_per_capita_over_avg==0), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = test_set %>% filter(gdp_per_capita_over_avg==1), 
+              method='lm',
+              color = "red") +
+  theme_minimal() +
+  ggtitle("GDP per capita vs New infection cases share") +
+  labs(x = "GDP per capita",
+       y = "New Cases Share * 1000") -> test_gdp
+
+test_set %>% 
+  ggplot(aes(x = female_emply_rate,
+             y = new_cases_share_5_years_later * 1000)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = test_set %>% filter(female_emply_rate_over_avg==0), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = test_set %>% filter(female_emply_rate_over_avg==1), 
+              method='lm',
+              color = "red") +
+  theme_minimal() +
+  ggtitle("Female labour force participation vs New infection cases share") +
+  labs(x = "female employment rate",
+       y = "New Cases Share * 1000") ->test_female_emply
+
+test_set %>% 
+  ggplot(aes(x = urb_rate,
+             y = new_cases_share_5_years_later * 1000)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = test_set %>% filter(urb_rate_over_avg==0), 
+              method='lm',
+              color = "black") +
+  geom_smooth(data = test_set %>% filter(urb_rate_over_avg==1), 
+              method='lm',
+              color = "red") +
+  theme_minimal() +
+  ggtitle("Urbanization rate vs New infection cases share") +
+  labs(x = "urbanization rate",
+       y = "New Cases Share * 1000") ->test_urb
+
+test_set %>%
+  ggplot(aes(x = drug_alcohol_disorder_share,
+             y = new_cases_share_5_years_later * 1000)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(data = test_set %>% filter(drug_alcohol_disorder_share_over_avg==0),
+              method='lm',
+              color = "black") +
+  geom_smooth(data = test_set %>% filter(drug_alcohol_disorder_share_over_avg==1),
+              method='lm',
+              color = "red") +
+  theme_minimal() +
+  ggtitle("Drug & alcohol use disorder share vs New infection cases share") +
+  labs(x = "Drug/alcohol use disorder share",
+       y = "New Cases Share * 1000") -> test_disorder
+
+# put all plots from the train set and test set to a large plot
+grid.arrange(train_hdi, train_haq, train_gdp, train_female_emply, train_urb, train_disorder) -> train_data_dist_plots
+grid.arrange(test_hdi, test_haq, test_gdp, test_female_emply, test_urb, test_disorder) -> test_data_dist_plots
 
