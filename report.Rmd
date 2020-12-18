@@ -3,6 +3,10 @@ title: "Analysis on how social factors influence the annual increase of HIV/AIDS
 subtitle: "Apply multivariate linear regression models with Regression Discontinuity Design (RDD) to observe the causal effect of the social factors and test against models with a test set"
 author: "Junming Zhang"
 date: "`r Sys.setenv(TZ='EST'); format(Sys.time(), '%A, %B %d, %Y')`"
+abstract: |
+  | This report focused on observing how social factors within a country level affect the spread of HIV and AIDS by building multivariate linear regression models and compare the statistics summary and diagnosis of two models. It is found that it is not capable of concluding the social factors found have absolutely strong influence on the HIV/AIDS spread, however, some social factors have significant causality on the HIV/AIDS spread by testing the behavior of the linear regression model before and after the threshold, concluding from the RDD. And also, the multilevel model works better by comparing the diagnosis statistics of models. This is important because it shows for what social factors the government invest more in order to contain the AIDS infection, a disease cannot be cured currently, and also suggests what kind of regression model is preferable for the similar task (for instance, make policies based on observing what social factors matter in country/region/territory level).
+  |
+  | **key words:** HIV/AIDS, social factors, multivariate linear regression, regression discontinuity design (RDD), observational study, causal inference
 header-includes:
    - \usepackage{xcolor}
 output:
@@ -10,11 +14,6 @@ output:
   html_document:
     df_print: paged
 ---
-
-abstract: |
-  | This report focused on using a frequentis multilevel regression model (random intercept) to predict if Donald Trump or Joe Biden can be selected as 2020 USA president. In order to build the model, we use a survey dataset (Tausanovitch, Chris and Lynn Vavreck, 2019)(Steven Ruggles, Sarah Flood, Ronald Goeken, Josiah Grover, Erin Meyer, Jose Pacas and Matthew Sobek, 2020) to build the model and a census dataset (PUMS USA, 2020) to predict who will be elected for post stratification purpose. Our model predicts that Joe Biden will be elected with significant superiority with respect to electoral votes, and we discussed the result. However, since there are some drawbacks in our model, we also discuss the weakness and how we can improve it.
-  |
-  | **key words:** HIV/AIDS, social factors, multivariate linear regression, regression discontinuity design (RDD), observational study, causal inference
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -32,12 +31,53 @@ I got marks deducted form general format in PS3, please provide me some ways to 
 
 
 ## References
-<!-- background -->
-1. Sepkowitz, K. A. (2001, June 07). AIDS - The First 20 Years: NEJM. Retrieved December 09, 2020, from https://www.nejm.org/doi/full/10.1056/NEJM200106073442306
-2. CDC. (2020, November 03). About HIV/AIDS. Retrieved December 09, 2020, from https://www.cdc.gov/hiv/basics/whatishiv.html
-3. Anderson, R. M., & Medley, G. F. (1988). Epidemiology of HIV infection and AIDS. Aids, 2. doi:10.1097/00002030-198800001-00009
-4. Rom, W. N., & Markowitz, S. B. (2015). Environmental and Occupational Medicine. Philadelphia, US: Lippincott, Williams &amp; Wilkins.
-5. CDC. (2005, February 4). HIV and Its Transmission. Retrieved December 09, 2020, from https://web.archive.org/web/20050204141148/http://www.cdc.gov/HIV/pubs/facts/transmission.htm
-6. U. (2006). 2006 report on the global AIDS epidemic. Geneva: UNAIDS.
-7. McCullom, R. (2013, February 26). An African Pope Won't Change the Vatican's Views on Condoms and AIDS. Retrieved December 09, 2020, from https://www.theatlantic.com/sexes/archive/2013/02/an-african-pope-wont-change-the-vaticans-views-on-condoms-and-aids/273535/
-8. CATIE. (2018). The Social Determinants of Health and Structural Interventions. Retrieved December 09, 2020, from https://www.catie.ca/en/hiv-canada/8/8-1
+<!-- show citation -->
+```{r, include=FALSE}
+citation("tidyverse")
+citation("lme4")
+citation("lmerTest")
+citation("knitr")
+citation("MuMIn")
+```
+<!-- up: background
+mid: software
+bottom: data
+-->
+
+\begin{enumerate}
+  % software
+  \item Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software,4(43), 1686, https://doi.org/10.21105/joss.01686 %tidyverse
+  \item Kuznetsova A, Brockhoff PB, Christensen RHB (2017). "lmerTest Package: Tests
+  in Linear Mixed Effects Models." Journal of Statistical Software,
+  82(13), 1-26. doi: 10.18637/jss.v082.i13 (URL: https://doi.org/10.18637/jss.v082.i13). %lmerTest
+  \item Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). Fitting
+  Linear Mixed-Effects Models Using lme4. Journal of Statistical Software,
+  67(1), 1-48. doi:10.18637/jss.v067.i01. % lme4
+  \item Yihui Xie (2020). knitr: A General-Purpose Package for Dynamic Report
+  Generation in R. R package version 1.30.
+  \item Yihui Xie (2015) Dynamic Documents with R and knitr. 2nd edition. Chapman
+  and Hall/CRC. ISBN 978-1498716963
+  \item Yihui Xie (2014) knitr: A Comprehensive Tool for Reproducible Research in
+  R. In Victoria Stodden, Friedrich Leisch and Roger D. Peng, editors,
+  Implementing Reproducible Computational Research. Chapman and Hall/CRC.
+  ISBN 978-1466561595 <!-- knitr -->
+  \item Kamil Bartoń (2020). MuMIn: Multi-Model Inference. R package version
+  1.43.17. https://CRAN.R-project.org/package=MuMIn % MuMIn
+  
+  % background
+  \item Sepkowitz, K. A. (2001, June 07). AIDS - The First 20 Years: NEJM. Retrieved         December 09, 2020, from https://www.nejm.org/doi/full/10.1056/NEJM200106073442306
+  \item CDC. (2020, November 03). About HIV/AIDS. Retrieved December 09, 2020, from\\
+https://www.cdc.gov/hiv/basics/whatishiv.html
+  \item Anderson, R. M., Medley, G. F. (1988). Epidemiology of HIV infection and AIDS. Aids, 2. doi:10.1097/00002030-198800001-00009
+  \item Rom, W. N., Markowitz, S. B. (2015). Environmental and Occupational Medicine.
+  Philadelphia, US: Lippincott, Williams, Wilkins.
+  
+  \item CDC. (2005, February 4). HIV and Its Transmission. Retrieved December 09, 2020,
+  from https://web.archive.org/web/20050204141148/http://www.cdc.gov/HIV/pubs/facts/transmission.htm
+  \item U. (2006). 2006 report on the global AIDS epidemic. Geneva: UNAIDS.
+  \item McCullom, R. (2013, February 26). An African Pope Won't Change the Vatican's Views
+  on Condoms and AIDS. Retrieved December 09, 2020, from
+  https://www.theatlantic.com/sexes/archive/2013/02/an-african-pope-wont-change-the-vaticans-views-on-condoms-and-aids/273535/
+  \item CATIE. (2018). The Social Determinants of Health and Structural Interventions.
+  Retrieved December 09, 2020, from https://www.catie.ca/en/hiv-canada/8/8-1
+\end{enumerate}
