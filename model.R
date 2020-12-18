@@ -4,10 +4,18 @@
 # with the generated data with the train set and
 # test against the test set
 
+library(tidyverse)
 library(lme4)
 library(lmerTest)
 library(knitr)
 library(MuMIn)
+library(broom)
+library(broom.mixed)
+
+options(knitr.table.format = function() {
+  if (knitr::is_latex_output()) 
+    "latex" else "pipe"
+})
 
 work_path = "/Users/peterzhang/Desktop/UTSG/STA/project/work"
 setwd(work_path)
@@ -74,6 +82,7 @@ mape <- abs(mean(abs((actuals_preds$predicteds - actuals_preds$actuals))/actuals
 acc_err_table = cbind(min_max_accuracy, mape)
 kable(acc_err_table, caption = "min max accuracy & mean absolute percentage error")
 
+model_linear %>% broom::tidy() %>% select(c("term", "estimate")) %>% kable()
 
 # model diagnosis on the multilevel MLR
 kable(anova(model_multilevel_linear), caption = "ANOVA table")
@@ -94,3 +103,4 @@ mape <- abs(mean(abs((actuals_preds$predicteds - actuals_preds$actuals))/actuals
 acc_err_table = cbind(min_max_accuracy, mape)
 kable(acc_err_table, caption = "min max accuracy & mean absolute percentage error")
 
+model_multilevel_linear %>% broom.mixed::tidy() %>% select(c("term", "effect", "group", "estimate")) %>% kable()

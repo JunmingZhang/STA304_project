@@ -4,7 +4,7 @@ subtitle: "Apply multivariate linear regression models with Regression Discontin
 author: "Junming Zhang"
 date: "`r Sys.setenv(TZ='EST'); format(Sys.time(), '%A, %B %d, %Y')`"
 abstract: |
-  | This report focused on observing how social factors within a country level affect the spread of HIV and AIDS by building multivariate linear regression models and compare the statistics summary and diagnosis of two models. It is found that it is not capable of concluding the social factors found have absolutely strong influence on the HIV/AIDS spread, however, some social factors have significant causality on the HIV/AIDS spread by testing the behavior of the linear regression model before and after the threshold, concluding from the RDD. And also, the multilevel model works better by comparing the diagnosis statistics of models. This is important because it shows for what social factors the government invest more in order to contain the AIDS infection, a disease cannot be cured currently, and also suggests what kind of regression model is preferable for the similar task (for instance, make policies based on observing what social factors matter in country/region/territory level).
+  | This report focused on observing how social factors within a country level affect the spread of HIV and AIDS by building multivariate linear regression models and compare the statistics summary and diagnosis of two models. It is found that it is not capable of concluding the social factors found have absolutely strong influence on the HIV/AIDS spread, however, some social factors have significant causality on the HIV/AIDS spread by testing the behavior of the linear regression model before and after the threshold, concluding from the RDD. And also, the multilevel model works better by comparing the diagnosis statistics of models. This is important because it shows for what social factors the government invest more to control in order to contain the AIDS infection, a disease cannot be cured currently, and also suggests what kind of regression model is preferable for the similar task (for instance, make policies based on observing what social factors matter in country/region/territory level) and also inspire other to how to build a statistics model when the observational study is inter-regional.
   |
   | **key words:** HIV/AIDS, social factors, multivariate linear regression, regression discontinuity design (RDD), observational study, causal inference
 header-includes:
@@ -38,6 +38,8 @@ citation("lme4")
 citation("lmerTest")
 citation("knitr")
 citation("MuMIn")
+citation("broom")
+citation("broom.mixed")
 ```
 <!-- up: background
 mid: software
@@ -60,9 +62,13 @@ bottom: data
   \item Yihui Xie (2014) knitr: A Comprehensive Tool for Reproducible Research in
   R. In Victoria Stodden, Friedrich Leisch and Roger D. Peng, editors,
   Implementing Reproducible Computational Research. Chapman and Hall/CRC.
-  ISBN 978-1466561595 <!-- knitr -->
+  ISBN 978-1466561595 % knitr
   \item Kamil Bartoń (2020). MuMIn: Multi-Model Inference. R package version
   1.43.17. https://CRAN.R-project.org/package=MuMIn % MuMIn
+  \item David Robinson, Alex Hayes and Simon Couch (2020). broom: Convert Statistical Objects into Tidy Tibbles. R
+  package version 0.7.1. https://CRAN.R-project.org/package=broom % broom
+  \item Ben Bolker and David Robinson (2020). broom.mixed: Tidying Methods for Mixed Models. R package version 0.2.6.
+  https://CRAN.R-project.org/package=broom.mixed % broom.mixed
   
   % background
   \item Sepkowitz, K. A. (2001, June 07). AIDS - The First 20 Years: NEJM. Retrieved         December 09, 2020, from https://www.nejm.org/doi/full/10.1056/NEJM200106073442306
