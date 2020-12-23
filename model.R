@@ -4,6 +4,7 @@
 # with the generated data with the train set and
 # test against the test set
 
+# all packages required for functionality
 library(tidyverse)
 library(lme4)
 library(lmerTest)
@@ -12,10 +13,11 @@ library(MuMIn)
 library(broom)
 library(broom.mixed)
 
-options(knitr.table.format = function() {
-  if (knitr::is_latex_output()) 
-    "latex" else "pipe"
-})
+# adjust output format of each table
+# options(knitr.table.format = function() {
+#   if (knitr::is_latex_output()) 
+#     "latex" else "pipe"
+# })
 
 work_path = "/Users/peterzhang/Desktop/UTSG/STA/project/work"
 setwd(work_path)
@@ -82,6 +84,7 @@ mape <- abs(mean(abs((actuals_preds$predicteds - actuals_preds$actuals))/actuals
 acc_err_table = cbind(min_max_accuracy, mape)
 kable(acc_err_table, caption = "min max accuracy & mean absolute percentage error")
 
+# a summary table on beta values of the simple MLR
 model_linear %>% broom::tidy() %>% select(c("term", "estimate")) %>% kable()
 
 # model diagnosis on the multilevel MLR
@@ -103,4 +106,6 @@ mape <- abs(mean(abs((actuals_preds$predicteds - actuals_preds$actuals))/actuals
 acc_err_table = cbind(min_max_accuracy, mape)
 kable(acc_err_table, caption = "min max accuracy & mean absolute percentage error")
 
+# a summary table on beta values of the multilevel MLR
 model_multilevel_linear %>% broom.mixed::tidy() %>% select(c("term", "effect", "group", "estimate")) %>% kable()
+

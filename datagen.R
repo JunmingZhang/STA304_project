@@ -4,6 +4,7 @@
 # multivariate inear model regression (lmer) and normal multivariate
 # linear regression (lm)
 
+# all packages required for functionality
 library("tidyverse")
 
 # read the raw data we need to produce the data sets we need
